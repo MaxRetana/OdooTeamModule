@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  team_module:
+    image: odoo:16.0
+    depends_on:
+      - team_module_db
+    ports:
+      - "8069:8069"
+    volumes:
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+    networks:
+      - team_network
+    environment:
+      - HOST=team_module_db
+      - USER=odoo
+      - PASSWORD=odoo
+    
+  team_module_db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    networks:
+      - team_network
+    volumes:
+      - team_module_data:/var/lib/postgresql/data
+
+networks:
+  team_network:
+    driver: bridge
+
+volumes:
+  team_module_data:
+    driver: local
