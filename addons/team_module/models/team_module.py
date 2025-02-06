@@ -10,30 +10,30 @@ class TeamModule(models.Model):
     _sql_constraints = [
         ('unique_team_name', 'UNIQUE(name)', 'The team name must be unique!')
     ]
-
-    # @api.model
-    # def create(self, vals):
-    #     """Si el nombre ya existe, le agrega un número incremental sin mostrar error."""
-    #     if 'name' in vals:
-    #         base_name = vals['name']
-    #         counter = 1
-    #         while self.search([('name', '=', vals['name'])]):
-    #             vals['name'] = f"{base_name} {counter}"
-    #             counter += 1
-
-    #     return super().create(vals)
-
-    # @api.constrains('name')
-    # def _check_unique_name(self):
-    #     """Valida que el nombre sea único para evitar errores con la restricción SQL."""
-    #     for record in self:
-    #         existing = self.search([('name', '=', record.name), ('id', '!=', record.id)])
-    #         if existing:
-    #             raise ValidationError(_('The team name must be unique!'))
     
     description = fields.Text(string='Description')
     team_leader_id = fields.Many2one('res.users', string='Team Leader')
     team_member_ids = fields.Many2many('res.partner', string='Team Members')
+    
+    @api.constrains('team_member_ids')
+    def _check_team_member_ids(self):
+        """Verifica que los miembros seleccionados no estén en otro equipo."""
+        for record in self:
+            name_members = []
+            # Busca los miembros que ya están asignados a otro equipo (no el actual)
+            for member in record.team_member_ids:
+                # Verifica si el miembro está asignado a algún equipo, excluyendo el actual
+                existing_teams = self.env['team.team'].search([
+                    ('id', '!=', record.id),  # Excluir el equipo actual
+                    ('team_member_ids', 'in', member.ids)  # Verifica si el miembro ya está en otros equipos
+                ])
+                if existing_teams:
+                    name_members.append(member.name)  # Agrega el nombre del miembro a la lista
+
+            if name_members:
+                # Lanza un mensaje con los nombres de los miembros que ya están asignados
+                raise ValidationError(_("The following members are already assigned to another team: %s") % ', '.join(name_members))
+    
     team_size = fields.Integer(string='Team Size', compute='_compute_team_size', store=True)
 
     @api.depends('team_member_ids')

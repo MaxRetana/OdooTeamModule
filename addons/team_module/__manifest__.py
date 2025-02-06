@@ -1,6 +1,6 @@
 {
   'name': 'Team Module',
-  'version': '2.0',
+  'version': '2.3',
   'author': 'Maximiliano Retana',
   'license': 'LGPL-3',  # Agrega una licencia (LGPL-3 es común para módulos de Odoo)
   'depends': ['base'],
