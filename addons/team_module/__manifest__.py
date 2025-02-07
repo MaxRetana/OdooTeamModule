@@ -7,6 +7,8 @@
   'data': [
     'security/ir.model.access.csv',
     'views/team_module_view.xml',
+    'reports/report.xml',
+    # 'reports/team_report.xml',
     # 'views/security.xml',
   ],
   'installable': True,

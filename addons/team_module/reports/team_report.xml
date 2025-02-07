@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="team_report_template">
+        <t t-call="web.html_container">
+            <div class="page">
+                <h2>Team Report</h2>
+                <t t-foreach="docs" t-as="doc">
+                    <div>
+                        <h3>Team Name: <span t-field="doc.name"/></h3>
+                        <p>Description: <span t-field="doc.description"/></p>
+                        <p>Team Leader: <span t-field="doc.team_leader_id.name"/></p>
+                        <p>Team Size: <span t-field="doc.team_size"/></p>
+                        <h4>Team Members:</h4>
+                        <ul>
+                            <t t-foreach="doc.team_member_ids" t-as="member">
+                                <li><span t-field="member.name"/></li>
+                            </t>
+                        </ul>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

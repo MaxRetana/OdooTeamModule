@@ -43,3 +43,4 @@ class TeamModule(models.Model):
             record.team_size = len(record.team_member_ids) + 1
           else:
             record.team_size = 0
+          
